@@ -41,7 +41,7 @@ class DatabaseManager(context: Context) {
         cursor?.use {
             if (it.moveToFirst()) {
                 do {
-                    val id = it.getInt(it.getColumnIndex("id"))
+                    val id = it.getInt(it.getColumnIndex("userId"))
                     val username = it.getString(it.getColumnIndex("username"))
                     val avatarUrl = it.getString(it.getColumnIndex("avatar_url"))
                     val user = FavoriteUser(id, username, avatarUrl)
