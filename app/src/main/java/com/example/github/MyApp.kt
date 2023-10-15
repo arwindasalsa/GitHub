@@ -14,7 +14,6 @@ class MyApp : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        // Inisialisasi database di sini
         database = Room.databaseBuilder(
             applicationContext,
             AppDatabase::class.java,

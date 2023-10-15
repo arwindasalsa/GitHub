@@ -22,14 +22,10 @@ class FavoriteActivity : AppCompatActivity() {
         adapter = FavoriteAdapter()
         recyclerView.adapter = adapter
 
-        // Inisialisasi DatabaseManager (atau sesuaikan dengan kelas yang sesuai)
         databaseManager = DatabaseManager(this)
 
-        // Ambil data favorit dari database
         val favoriteUsers = databaseManager.getAllFavoriteUsers()
 
-        // Set data ke adapter
         adapter.setData(favoriteUsers)
     }
 }
-

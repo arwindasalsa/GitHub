@@ -10,7 +10,6 @@ import com.bumptech.glide.Glide
 import com.example.github.Adapter.SectionsPagerAdapter
 import com.example.github.Favtab.FavoriteUser
 import com.example.github.Favtab.FavoriteUserDao
-import com.example.github.Model.UserData
 import com.example.github.View.DetailViewModel
 import com.example.github.databinding.ActivityDetailBinding
 import com.google.android.material.tabs.TabLayout
@@ -19,8 +18,6 @@ import com.google.android.material.tabs.TabLayoutMediator
 class DetailActivity : AppCompatActivity() {
 
     lateinit var bd: ActivityDetailBinding
-    var followers = arrayListOf<UserData>()
-    var following = arrayListOf<UserData>()
     var userId: Int = 0
     var avatar: String? = ""
     var username: String? = ""
@@ -49,12 +46,12 @@ class DetailActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this)[DetailViewModel::class.java]
 
         username = intent.getStringExtra("username")
-        namedetail = intent.getStringExtra("username")
+        namedetail = intent.getStringExtra("name")
         userId = intent.getIntExtra("id", 0)
         avatar = intent.getStringExtra("avatar")
 
         bd.tvName.text = namedetail
-        bd.tvUsername.text = username.toString()
+        bd.tvUsername.text = username
         Glide.with(this)
             .load(avatar)
             .into(bd.imgDetail)
@@ -80,16 +77,12 @@ class DetailActivity : AppCompatActivity() {
         }.attach()
 
         bd.toggleFavorite.setOnClickListener {
-            val userId = userId.toString()
-            val favoriteUser = FavoriteUser(userId = userId)
-
-            favoriteUserDao.insertFavorite(favoriteUser)
+            val favoriteUser =
+                username?.let { it1 -> avatar?.let { it2 -> FavoriteUser(userId = userId, username = it1, avatarUrl = it2) } }
+            if (favoriteUser != null) {
+                favoriteUserDao.insertFavorite(favoriteUser)
+            }
         }
-    }
-
-    private fun setView() {
-        bd.tvFollowersDetail.text = followers.size.toString()
-        bd.tvFollowingDetail.text = following.size.toString()
     }
 
     private fun showProgressBar() {
