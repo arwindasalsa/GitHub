@@ -16,7 +16,10 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class MainViewModel : ViewModel(){
+class MainViewModel : ViewModel() {
+    private val _userData = MutableLiveData<UserData>()
+    val userData: LiveData<UserData> get() = _userData
+
     private val _userListSearch = MutableLiveData<List<UserData?>>()
     val userListSearch: MutableLiveData<List<UserData?>> get() = _userListSearch
 
@@ -29,6 +32,10 @@ class MainViewModel : ViewModel(){
 
     companion object {
         private const val TAG = "MainViewModel"
+    }
+
+    fun setUserData(user: UserData) {
+        _userData.value = user
     }
 
     fun fetchGitHubUserSearch(userLogin: String) {
@@ -46,7 +53,7 @@ class MainViewModel : ViewModel(){
 
                     for (user in usersToFetch) {
                         user?.login?.let { userId ->
-                            fetchGithubUserDetail(userId) {             }
+                            fetchGithubUserDetail(userId)
                         }
                     }
 
@@ -67,13 +74,14 @@ class MainViewModel : ViewModel(){
         })
     }
 
-    private fun fetchGithubUserDetail(userId: String, callback: () -> Unit) {
+    private fun fetchGithubUserDetail(userId: String) {
         val GithubService = GithubAPI.service
         val call = GithubService.getUserData(userId)
 
         call.enqueue(object : Callback<DetailUserData> {
             override fun onResponse(call: Call<DetailUserData>, response: Response<DetailUserData>) {
                 if (response.isSuccessful) {
+                    // Lakukan sesuatu dengan data DetailUserData jika perlu
                 } else {
                     Log.e(TAG, "onFailure: ${response.message()}")
                 }

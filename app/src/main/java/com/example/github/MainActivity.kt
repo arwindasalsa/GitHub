@@ -1,5 +1,3 @@
-package com.example.github
-
 import android.content.ContentValues.TAG
 import android.content.Intent
 import android.os.Bundle
@@ -9,7 +7,10 @@ import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.SearchView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.example.github.Adapter.HomeAdapter
+import com.example.github.DetailActivity
 import com.example.github.Interfaces.GithubAPI
 import com.example.github.Model.SearchResponse
 import com.example.github.Model.UserData
@@ -18,7 +19,8 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import com.example.github.FavoriteActivity
-
+import com.example.github.R
+import com.example.github.View.MainViewModel
 
 class MainActivity : AppCompatActivity() {
 
@@ -26,6 +28,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var adapter: HomeAdapter
     var names = arrayListOf<UserData>()
     private lateinit var progressBar: ProgressBar
+    private lateinit var viewModel: MainViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,6 +50,14 @@ class MainActivity : AppCompatActivity() {
         })
 
         progressBar = findViewById(R.id.progressBar)
+
+        viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
+
+        viewModel.userData.observe(this, Observer { userData ->
+            if (userData != null) {
+                bd.tvAppName.text = userData.username
+            }
+        })
 
         GithubAPI.service.getListUsers().enqueue(object : Callback<List<UserData>> {
             override fun onResponse(
@@ -85,10 +96,9 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-        // Tombol "Favorite" untuk menuju halaman favorit
-        val toggfavoriteButton = findViewById<Button>(R.id.toggleFavorite)
+        val toggleFavoriteButton = findViewById<Button>(R.id.toggleFavorite)
 
-        toggfavoriteButton.setOnClickListener {
+        toggleFavoriteButton.setOnClickListener {
             val intent = Intent(this, FavoriteActivity::class.java)
             startActivity(intent)
         }
